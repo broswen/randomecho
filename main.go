@@ -23,6 +23,7 @@ func main() {
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 		}
 		defer req.Body.Close()
+		fmt.Printf("%s %s %s %s \n %s", time.Now().Format(time.RFC3339), req.RemoteAddr, req.Method, req.URL.Path, body)
 		fmt.Fprintf(rw, "%s %s %s %s \n %s", time.Now().Format(time.RFC3339), req.RemoteAddr, req.Method, req.URL.Path, body)
 	})
 	log.Printf("listening on :%s", port)
