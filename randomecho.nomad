@@ -29,7 +29,7 @@ job "randomecho" {
       driver = "docker"
 
       service {
-        tags = ["echo", "go", "api"]
+        tags = ["echo", "go", "api", "${NOMAD_ALLOC_ID}"]
         port = "http"
         check {
           type = "http"
