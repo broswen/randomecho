@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    environment:
+      - NOMAD_PORT_http=8080
+    ports:
+      - "8080:8080"
