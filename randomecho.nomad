@@ -7,17 +7,17 @@ job "randomecho" {
     attribute = "${node.datacenter}"
   }
 
-  group "echo" {
+  group "api" {
     count = 5
 
     spread {
       attribute = "${node.unique.name}"
       target "silverstone" {
-        percent = 66
+        percent = 50
       }
 
       target "corsair" {
-        percent = 34
+        percent = 50
       }
     }
 
@@ -25,39 +25,74 @@ job "randomecho" {
       port "http" {}
     }
 
-    task "container" {
+    task "randomecho" {
       driver = "docker"
-
-      service {
-        tags = ["echo", "go", "api", "${NOMAD_ALLOC_ID}"]
-        port = "http"
-        check {
-          type = "http"
-          protocol = "http"
-          method = "GET"
-          path = "/time"
-          interval = "10s"
-          timeout = "2s"
-
-          check_restart {
-            limit = 3
-            grace = "3s"
-          }
-        }
-      }
-
-      env = {
-        TEST = true
-      }
 
       config {
         image = "broswen/randomecho:2.0.0"
         ports = ["http"]
       }
 
+      service {
+        name = "randomecho"
+        port = "http"
+        check {
+          name = "alive"
+          type = "http"
+          protocol = "http"
+          method = "GET"
+          path = "/time"
+          interval = "10s"
+          timeout = "2s"
+        }
+      }
+
       resources {
         cpu    = 256
         memory = 128
+      }
+    }
+  }
+
+  group "cache" {
+    count = 1
+
+    network {
+      port "db" {
+        to = 6379
+      }
+    }
+
+    restart {
+      attempts = 10
+      interval = "5m"
+      delay = "30s"
+      mode = "delay"
+    }
+
+
+    task "redis" {
+      driver = "docker"
+
+      config {
+        image = "redis:latest"
+        ports = ["db"]
+      }
+
+      service {
+        name = "redis"
+        port = "db"
+        check {
+          name = "alive"
+          type = "tcp"
+          interval = "10s"
+          timeout = "2s"
+        }
+      }
+
+      resources {
+        cpu = 500
+        memory = 256
       }
     }
   }
