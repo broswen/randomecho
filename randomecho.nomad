@@ -29,7 +29,7 @@ job "randomecho" {
       driver = "docker"
 
       config {
-        image = "broswen/randomecho:2.0.0"
+        image = "broswen/randomecho:3.0.0"
         ports = ["http"]
       }
 

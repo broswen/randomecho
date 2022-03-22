@@ -7,8 +7,11 @@ up:
 down:
 	docker-compose down
 
-build:
+docker-build:
 	docker build . -t $(DOCKER_REPO):$(tag)
+
+docker-push:
+	docker push $(DOCKER_REPO):$(tag)
 
 test:
 	go test -race ./...

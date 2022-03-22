@@ -3,6 +3,12 @@ services:
   api:
     build: .
     environment:
-      - NOMAD_PORT_http=8080
+      NOMAD_PORT_http: 8080
+      CACHE_ADDR: cache:6379
     ports:
       - "8080:8080"
+
+  cache:
+    image: redis:latest
+    ports:
+      - "6379:6379"

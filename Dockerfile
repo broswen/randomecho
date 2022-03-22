@@ -5,9 +5,11 @@ RUN apk add build-base
 WORKDIR /app
 # copy dependencies and get them
 COPY ./go.mod ./
-RUN go get -d -v ./...
+COPY ./go.sum ./
 # copy go src file(s)
 COPY ./main.go ./main.go
+COPY ./counter ./counter
+
 # build the binary
 RUN GOOS=linux CGO_ENABLED=1 GOARCH=amd64 go build -o echo ./main.go
 
